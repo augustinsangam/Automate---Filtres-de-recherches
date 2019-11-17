@@ -6,11 +6,11 @@
 #   Projet      :   Itinéraire rapide - Drone collecteur
 ####################################################################################
 
-from Automate   import Automate
 from Etat       import Etat
+from Automate   import Automate
+from Panier     import Panier
 
-if __name__ == "__main__" :
-    
+def testAutomate() :
     print("Recherche de 'av', 'B', ''")
 
     automate = Automate()
@@ -32,3 +32,41 @@ if __name__ == "__main__" :
         print(element)
 
 
+def testPanier() :
+    panier = Panier()
+    
+    panier.ajouter('avion B16A49 A')
+    panier.ajouter('avion B26A49 B')
+    panier.ajouter('ami 111111 B')
+    panier.ajouter('amie 123ABC C')
+
+    print('Les éléments du panier sont : ')
+
+    for element in panier.objets :
+        print(element)
+
+    print("\nOn retire 'avion B26A49 B'")
+    panier.retirer('avion B26A49 B')
+
+    print('Les éléments du panier sont : ')
+
+    for element in panier.objets :
+        print(element)
+
+    print("\nOn vide le panier")
+    panier.vider()
+
+    print('Les éléments du panier sont : ')
+
+    for element in panier.objets :
+        print(element)
+
+
+if __name__ == "__main__" :
+    print ('*'*70)
+    testAutomate()
+
+    print('\n\n')
+    print ('*'*70)
+    testPanier()
+    
