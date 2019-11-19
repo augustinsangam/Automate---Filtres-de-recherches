@@ -1,6 +1,6 @@
 from tkinter                                        import ttk
-from    tkinter                                     import *
-from    tkinter                                     import messagebox
+from tkinter                                        import *
+from tkinter                                        import messagebox
 from Etat                                           import Etat
 from Automate                                       import Automate
 from Panier                                         import Panier
@@ -27,7 +27,8 @@ class Interface(Frame) :
         self.canvasCommande     =   None
         self.initialiserGUI()                   #Place les bouttons sur la page d'acceuil
         self.automate           =   None
-        self.panier             =  Panier()
+        self.panier             =   Panier()
+        self.fenetrePrincipale.resizable(0, 0)
 
 
     def initialiserGUI(self, **kwargs):
@@ -42,8 +43,8 @@ class Interface(Frame) :
         self.master.title('Livraison')
 
         self.canvasPrincipale = Canvas(self.fenetrePrincipale, width=1400, height=650, background='white')
-        self.canvasCommande   = Canvas(self.fenetrePrincipale, width=600, height=450, background='#e6f2ff',borderwidth=10, relief=RAISED)
-        self.canvasPanier     = Canvas(self.fenetrePrincipale, width=350, height=450, background='#ffe6e6',borderwidth=10, relief=RAISED)
+        self.canvasCommande   = Canvas(self.fenetrePrincipale, width=600, height=450, background='#e6f2ff',borderwidth=5, relief=RAISED)
+        self.canvasPanier     = Canvas(self.fenetrePrincipale, width=350, height=450, background='#ffe6e6',borderwidth=5, relief=RAISED)
 
 
         self.canvasCommande.place(relx=0.43, rely=0.5, anchor=CENTER)
@@ -57,9 +58,9 @@ class Interface(Frame) :
                                           fill="black")
         self.canvasPrincipale.create_text(110, 142, text="  Initialiser \nProgramme",
                                           font="Arial 20 bold",
-                                          fill="black")
+                                          fill="black", tag="texteACacher")
 
-        self.canvasPrincipale.create_text(110, 362, text="  Programme Initialisé",
+        self.canvasPrincipale.create_text(110, 142, text="  Programme Initialisé",
                                           font="Arial 16 bold",
                                           fill="red", tag="programmeInitialise")
         self.canvasPrincipale.itemconfigure("programmeInitialise", state='hidden')
@@ -73,40 +74,40 @@ class Interface(Frame) :
         """ 
         Fonction qui insere tous les bouttons de l'interface, et les relient à leurs méthodes
         """
-        photo           = PhotoImage(file = r"Play-Button.png")
+        photo           = PhotoImage(file = r"../data/image/Play-Button.png")
         label           = Label(image=photo)
-        label.image     = photo  # keep a reference!
+        label.image     = photo  # on garde une référence!
         bouttonImage    = Button(self.fenetrePrincipale,  image= label.image,command=self.creerAutomate, anchor=CENTER, cursor="hand2")
         bouttonImage.configure(width=150, height=150, activebackground="#33B5E5", cursor="hand2")
 
 
-        self.canvasPrincipale.create_window(30, 265, anchor=W, window=bouttonImage)
+        self.canvasPrincipale.create_window(30, 265, anchor=W, window=bouttonImage, tag="imageACacher")
         self.canvasPrincipale.pack()
 
 
         bouttonAjouterPanier = Button(self.fenetrePrincipale, text="Ajouter au Panier", command=self.ajouterPanier, anchor=CENTER, cursor="hand2")
         bouttonAjouterPanier.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2", font="Arial 15 bold")
-        self.canvasCommande.create_window(40, 400, anchor=W, window=bouttonAjouterPanier)
+        self.canvasCommande.create_window(180, 400, anchor=W, window=bouttonAjouterPanier)
 
 
         bouttonCommander = Button(self.fenetrePrincipale, text="Commander", command=self.commander,
                                       anchor=CENTER, cursor="hand2")
         bouttonCommander.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2",
                                        font="Arial 15 bold")
-        self.canvasCommande.create_window(330, 400, anchor=W, window=bouttonCommander)
+        self.canvasPanier.create_window(180, 415, anchor = CENTER, window=bouttonCommander)
 
 
         bouttonRetirerPanier = Button(self.fenetrePrincipale, text="Retirer du Panier", command=self.retirerPanier,
                                  anchor=CENTER, cursor="hand2")
         bouttonRetirerPanier.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2", font="Arial 15 bold")
-        self.canvasPanier.create_window(180, 315, anchor=CENTER, window=bouttonRetirerPanier)
+        self.canvasPanier.create_window(180, 295, anchor = CENTER, window=bouttonRetirerPanier)
 
 
 
         bouttonViderPanier = Button(self.fenetrePrincipale, text="Vider le Panier", command=self.viderPanier,
                                  anchor=CENTER, cursor="hand2")
         bouttonViderPanier.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2", font="Arial 15 bold")
-        self.canvasPanier.create_window(180, 385, anchor=CENTER, window=bouttonViderPanier)
+        self.canvasPanier.create_window(180, 355, anchor=CENTER, window=bouttonViderPanier)
 
 
     def insererInputsCommande(self):
@@ -154,8 +155,8 @@ class Interface(Frame) :
 
 
         frame = Frame(self.fenetrePrincipale)
-        frame.place(relx=0.36, rely=0.53, anchor=CENTER)
-        self.listeInventaire = Listbox(frame, width=37, font="Helvetica 12 ")
+        frame.place(relx=0.43, rely=0.53, anchor=CENTER)
+        self.listeInventaire = Listbox(frame, width=60, font="Helvetica 12 ")
         self.listeInventaire.pack(side="left", fill="y")
         scrollbar = Scrollbar(frame, orient="vertical")
         scrollbar.config(command=self.listeInventaire.yview)
@@ -178,7 +179,7 @@ class Interface(Frame) :
         frame = Frame(self.fenetrePrincipale)
         frame.place(relx=0.83, rely=0.4, anchor=CENTER)
 
-        self.listePanier = Listbox(frame, width=30, height=10, font=("Helvetica", 12))
+        self.listePanier = Listbox(frame, width=30, height=9, font=("Helvetica", 12))
         self.listePanier.pack(side="left", fill="y")
 
         scrollbar = Scrollbar(frame, orient="vertical")
@@ -186,6 +187,7 @@ class Interface(Frame) :
         scrollbar.pack(side="right", fill="y")
 
         self.listePanier.config(yscrollcommand=scrollbar.set)
+
 
     def mettreAJourInventaire(self, event=None):
         """
@@ -222,7 +224,10 @@ class Interface(Frame) :
 
         self.automate = Automate()
         self.canvasPrincipale.itemconfigure("programmeInitialise", state='normal')
+        self.canvasPrincipale.itemconfigure("texteACacher", state='hidden')
+        self.canvasPrincipale.itemconfigure("imageACacher", state='hidden')
         self.mettreAJourInventaire()
+
 
     def modifierTailleListes(self, estUnAjoutPanier, chaine, estUneCommande=False):
         """
@@ -244,6 +249,7 @@ class Interface(Frame) :
         self.mettreAJourInventaire()
         self.mettreAJOurPanier()
 
+
     def ajouterPanier(self):
         """
         Fonction qui ajoute l'élément séléctionner dans le panier
@@ -256,6 +262,7 @@ class Interface(Frame) :
         except IndexError:
             self.automateNonInitialiserErreur()
 
+
     def retirerPanier(self):
         """
         Fonction qui retire l'élément séléctionné du panier
@@ -266,6 +273,7 @@ class Interface(Frame) :
             self.modifierTailleListes(False,objet)
         except IndexError:
             self.automateNonInitialiserErreur()
+
 
     def viderPanier(self, estUneCommande=False):
         """

@@ -6,9 +6,9 @@
 #   Projet      :   Automate : Filtres de recherches
 ####################################################################################
 
-from collections import defaultdict
+from collections    import defaultdict
 
-from Etat import Etat
+from Etat           import Etat
 
 class Automate(object):
     """
@@ -71,6 +71,15 @@ class Automate(object):
 
 
     def ajouterEtat(self,etat):
+        """
+        Méthode ajouterEtat(etat) :
+
+        Permet d'ajouter un état à l'automate
+
+        param       etat    :   L'état à ajouter
+
+        """
+
         for etatPrecedent in etat.genererEtatsValidesPrecedents():
             self.memoire[Etat.freeze(etatPrecedent)].add(etat)
 
@@ -101,6 +110,15 @@ class Automate(object):
         return (len(tousLesChoix), list(tousLesChoix)[0:10])
 
     def __iadd__(self, etat):
+        """
+        Méthode spéciale __iadd__
+        Surchage de l'opérateur +=
+
+        Permet d'ajouter un état à l'automate
+
+        param       etat    :   L'état à ajouter
+
+        """
         self.ajouterEtat(etat)
         return self
 
