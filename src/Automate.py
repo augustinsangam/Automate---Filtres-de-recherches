@@ -70,7 +70,9 @@ class Automate(object):
         return self.memoire[etat]
 
 
-
+    def ajouterEtat(self,etat):
+        for etatPrecedent in etat.genererEtatsValidesPrecedents():
+            self.memoire[Etat.freeze(etatPrecedent)].add(etat)
 
     def enleverEtat(self, etat) :
         """
@@ -98,7 +100,9 @@ class Automate(object):
         tousLesChoix = self[etat]
         return (len(tousLesChoix), list(tousLesChoix)[0:10])
 
-    
+    def __iadd__(self, etat):
+        self.ajouterEtat(etat)
+        return self
 
     def __isub__(self, etat) :
         """
@@ -113,3 +117,4 @@ class Automate(object):
 
         self.enleverEtat(etat)
         return self
+

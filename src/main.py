@@ -1,36 +1,24 @@
-
 ####################################################################################
 #   Fichier     :   main.py
-#   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni
+#   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni 
 #                       & Nicolas Verbaere
 #   Date        :   17 Novembre 2019
 #   Projet      :   Automate : Filtres de recherches
 ####################################################################################
 
 
-from Etat import Etat
-from Automate import Automate
-from Panier import Panier
-from Interface.Interface import Interface
-from tkinter import *
-
-def testAutomate():
-
-
-
 from Etat                               import Etat
 from Automate                           import Automate
 from Panier                             import Panier
 from Interface.CommandeImpossibleError  import CommandeImpossibleError
+from Interface.Interface                import Interface
 
 
-
-def testAutomate1() :
-
+def testAutomate1():
     print("Recherche de '', '', ''")
 
     automate = Automate()
-    
+
     print('\nAvant le retrait')
 
     etat = Etat('', '', '')
@@ -39,14 +27,11 @@ def testAutomate1() :
 
     print("Le nombre total d'éléments correspondant à la recherche est : ", choixPossibles[0])
 
-    for element in choixPossibles[1] :
+    for element in choixPossibles[1]:
         print(element.obtenirChaine())
 
 
-
-
-def testAutomate2() :
-
+def testAutomate2():
     print("Recherche de 'av', 'B', ''")
 
     automate = Automate()
@@ -55,7 +40,7 @@ def testAutomate2() :
 
     etat = Etat('av', 'B', '')
 
-    for element in automate[etat] :
+    for element in automate[etat]:
         print(element.obtenirChaine())
 
     print('\nAprès le retrait de avion B16A49 A')
@@ -63,24 +48,21 @@ def testAutomate2() :
 
     etat = Etat('av', 'B', '')
 
-    for element in automate[etat] :
+    for element in automate[etat]:
         print(element.obtenirChaine())
 
-    
 
-
-def testPanier1() :
-
+def testPanier1():
     panier = Panier()
-    
+
     panier += Etat('avion', 'B16A49', 'A')
     panier += Etat('avion', 'B26A49', 'B')
     panier += Etat('ami', '111111', 'B')
-    panier += Etat('amie', '123ABC' , 'C');
+    panier += Etat('amie', '123ABC', 'C');
 
     print('Les éléments du panier sont : ')
 
-    for element in panier :
+    for element in panier:
         print(element.obtenirChaine())
     print('Poids total :', panier.poids)
 
@@ -89,7 +71,7 @@ def testPanier1() :
 
     print('Les éléments du panier sont : ')
 
-    for element in panier :
+    for element in panier:
         print(element.obtenirChaine())
     print('Poids total :', panier.poids)
 
@@ -98,49 +80,46 @@ def testPanier1() :
 
     print('Les éléments du panier sont : ')
 
-    for element in panier :
+    for element in panier:
         print(element.obtenirChaine())
     print('Poids total :', panier.poids)
 
 
-
-
-def testPanier2() :
-
+def testPanier2():
     panier = Panier()
-    
+
     panier += Etat('avion', 'B16A49', 'A')
     panier += Etat('avion', 'B26A49', 'B')
     panier += Etat('ami', '111111', 'B')
-    panier += Etat('amies', '123ABC' , 'C');   # Créé au hasard. Pas d'importance
-    panier += Etat('amies', '123ABD' , 'C');   # Créé au hasard. Pas d'importance
-    panier += Etat('amiess', '123ABE' , 'C');  # Créé au hasard. Pas d'importance
-    try :
-        panier += Etat('amiesss', '123ABF' , 'C'); # Créé au hasard. Pas d'importance
-    except CommandeImpossibleError :
+    panier += Etat('amies', '123ABC', 'C');  # Créé au hasard. Pas d'importance
+    panier += Etat('amies', '123ABD', 'C');  # Créé au hasard. Pas d'importance
+    panier += Etat('amiess', '123ABE', 'C');  # Créé au hasard. Pas d'importance
+    try:
+        panier += Etat('amiesss', '123ABF', 'C');  # Créé au hasard. Pas d'importance
+    except CommandeImpossibleError:
         print('Le test passe. On ne peut pas inserer plus de 25 kg dans le panier.')
-    
 
 
+if __name__ == "__main__":
+    print('*' * 70)
+    # testAutomate1()
+    #
+    # print()
+    # print('*' * 70)
+    # testAutomate2()
+    #
+    # print()
+    # print('\n\n')
+    # print('*' * 70)
+    # testPanier1()
+    #
+    # print()
+    # print('\n\n')
+    # print('*' * 70)
+    # testPanier2()
+    # print()
+    # print()
+    # print()
 
-if __name__ == "__main__" :
-    print ('*'*70)
-    testAutomate1()
-
-    print()
-    print ('*'*70)
-    testAutomate2()
-
-    print()
-    print('\n\n')
-    print ('*'*70)
-    testPanier1()
-
-    print()
-    print('\n\n')
-    print ('*'*70)
-    testPanier2()
-
-    print()
-    print()
-    print()
+    interface= Interface()
+    interface.mainloop()

@@ -1,9 +1,10 @@
-
-
-from tkinter import ttk
+from tkinter                                        import ttk
 from    tkinter                                     import *
 from    tkinter                                     import messagebox
-
+from Etat                                           import Etat
+from Automate                                       import Automate
+from Panier                                         import Panier
+from Interface.CommandeImpossibleError              import CommandeImpossibleError
 
 
 
@@ -22,9 +23,11 @@ class Interface(Frame) :
         """
 
         self.fenetrePrincipale  =   Tk()
-        self.canvasPrincipale             =   None        #le widget principale.
+        self.canvasPrincipale   =   None        #le widget principale.
         self.canvasCommande     =   None
         self.initialiserGUI()                   #Place les bouttons sur la page d'acceuil
+        self.automate           =   None
+        self.panier             =  Panier()
 
 
     def initialiserGUI(self, **kwargs):
@@ -39,8 +42,8 @@ class Interface(Frame) :
         self.master.title('Livraison')
 
         self.canvasPrincipale = Canvas(self.fenetrePrincipale, width=1400, height=650, background='white')
-        self.canvasCommande = Canvas(self.fenetrePrincipale, width=600, height=450, background='#e6f2ff',borderwidth=10, relief=RAISED)
-        self.canvasPanier= Canvas(self.fenetrePrincipale, width=350, height=450, background='#ffe6e6',borderwidth=10, relief=RAISED)
+        self.canvasCommande   = Canvas(self.fenetrePrincipale, width=600, height=450, background='#e6f2ff',borderwidth=10, relief=RAISED)
+        self.canvasPanier     = Canvas(self.fenetrePrincipale, width=350, height=450, background='#ffe6e6',borderwidth=10, relief=RAISED)
 
 
         self.canvasCommande.place(relx=0.43, rely=0.5, anchor=CENTER)
@@ -56,6 +59,11 @@ class Interface(Frame) :
                                           font="Arial 20 bold",
                                           fill="black")
 
+        self.canvasPrincipale.create_text(110, 362, text="  Programme Initialisé",
+                                          font="Arial 16 bold",
+                                          fill="red", tag="programmeInitialise")
+        self.canvasPrincipale.itemconfigure("programmeInitialise", state='hidden')
+
         self.insererBouttons()
         self.insererInputsCommande()
         self.insererInputPanier()
@@ -65,10 +73,10 @@ class Interface(Frame) :
         """ 
         Fonction qui insere tous les bouttons de l'interface, et les relient à leurs méthodes
         """
-        photo= PhotoImage(file = r"Play-Button.png")
-        label = Label(image=photo)
-        label.image = photo  # keep a reference!
-        bouttonImage= Button(self.fenetrePrincipale,  image= label.image,command=self.creerGraphe, anchor=CENTER, cursor="hand2")
+        photo           = PhotoImage(file = r"Play-Button.png")
+        label           = Label(image=photo)
+        label.image     = photo  # keep a reference!
+        bouttonImage    = Button(self.fenetrePrincipale,  image= label.image,command=self.creerAutomate, anchor=CENTER, cursor="hand2")
         bouttonImage.configure(width=150, height=150, activebackground="#33B5E5", cursor="hand2")
 
 
@@ -76,32 +84,35 @@ class Interface(Frame) :
         self.canvasPrincipale.pack()
 
 
-        bouttonAjouterPanier= Button(self.fenetrePrincipale, text="Ajouter au Panier", command=self.creerGraphe, anchor=CENTER, cursor="hand2")
+        bouttonAjouterPanier = Button(self.fenetrePrincipale, text="Ajouter au Panier", command=self.ajouterPanier, anchor=CENTER, cursor="hand2")
         bouttonAjouterPanier.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2", font="Arial 15 bold")
         self.canvasCommande.create_window(40, 400, anchor=W, window=bouttonAjouterPanier)
 
 
-        bouttonCommander= Button(self.fenetrePrincipale, text="Commander", command=self.creerGraphe,
+        bouttonCommander = Button(self.fenetrePrincipale, text="Commander", command=self.commander,
                                       anchor=CENTER, cursor="hand2")
         bouttonCommander.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2",
                                        font="Arial 15 bold")
         self.canvasCommande.create_window(330, 400, anchor=W, window=bouttonCommander)
 
 
-        bouttonRetirerPanier = Button(self.fenetrePrincipale, text="Retirer du Panier", command=self.creerGraphe,
+        bouttonRetirerPanier = Button(self.fenetrePrincipale, text="Retirer du Panier", command=self.retirerPanier,
                                  anchor=CENTER, cursor="hand2")
         bouttonRetirerPanier.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2", font="Arial 15 bold")
         self.canvasPanier.create_window(180, 315, anchor=CENTER, window=bouttonRetirerPanier)
 
 
 
-        bouttonViderPanier = Button(self.fenetrePrincipale, text="Vider le Panier", command=self.creerGraphe,
+        bouttonViderPanier = Button(self.fenetrePrincipale, text="Vider le Panier", command=self.viderPanier,
                                  anchor=CENTER, cursor="hand2")
         bouttonViderPanier.configure(width=20, height=1, activebackground="#33B5E5", cursor="hand2", font="Arial 15 bold")
         self.canvasPanier.create_window(180, 385, anchor=CENTER, window=bouttonViderPanier)
 
 
     def insererInputsCommande(self):
+        """
+        Fonction qui insere tous les widgets dans la section 'Inventaire'
+        """
 
         self.canvasCommande.create_text(280, 30, text="     Inventaire", font="Arial 24 bold",
                                         fill="black")
@@ -113,61 +124,180 @@ class Interface(Frame) :
                                         fill="black")
 
 
-        comboExample = ttk.Combobox(self.fenetrePrincipale,
-                                    values=["",
+        self.comboBox = ttk.Combobox(self.fenetrePrincipale,
+                                    values=['',
                                         "A",
                                         "B",
-                                        "C"], width=12)
-        comboExample.place(relx=0.252, rely=0.29, anchor=CENTER)
-        comboExample.current(0)
+                                        "C"], width=12, state = "readonly")
+        self.comboBox.place(relx=0.252, rely=0.29, anchor=CENTER)
+        self.comboBox.current(0)
+        self.comboBox.bind("<<ComboboxSelected>>", self.mettreAJourInventaire)
 
 
-        inputCode=StringVar(self.fenetrePrincipale, value='')
-        inputNom=StringVar(self.fenetrePrincipale, value='')
-        inputCodeWidget = Entry(self.fenetrePrincipale,textvariable=inputCode, borderwidth=2, width=14)
-        inputNomWidget = Entry(self.fenetrePrincipale, borderwidth=2, textvariable=inputNom)
+        self.inputCode = StringVar(self.fenetrePrincipale, value='')
+        self.inputNom = StringVar(self.fenetrePrincipale, value='')
+
+        self.inputCode.trace("w", lambda name, index, mode, inputCode=self.inputCode: callbackInput(self.inputCode))
+        self.inputNom.trace("w", lambda name, index, mode, inputCode=self.inputNom: callbackInput(self.inputNom))
+
+        def callbackInput(sv):
+            self.mettreAJourInventaire()
+
+        inputCodeWidget = Entry(self.fenetrePrincipale,textvariable=self.inputCode, borderwidth=2, width=14)
+        inputNomWidget = Entry(self.fenetrePrincipale, borderwidth=2, textvariable=self.inputNom)
         inputCodeWidget.pack()
         inputNomWidget.pack()
+
+
         self.canvasCommande.create_window(215, 96, anchor=W, window=inputCodeWidget)
         self.canvasCommande.create_window(415, 96, anchor=W, window=inputNomWidget)
 
+
         frame = Frame(self.fenetrePrincipale)
         frame.place(relx=0.36, rely=0.53, anchor=CENTER)
-        listeInventaire = Listbox(frame, width=37, font="Helvetica 12 ")
-        listeInventaire.pack(side="left", fill="y")
+        self.listeInventaire = Listbox(frame, width=37, font="Helvetica 12 ")
+        self.listeInventaire.pack(side="left", fill="y")
         scrollbar = Scrollbar(frame, orient="vertical")
-        scrollbar.config(command=listeInventaire.yview)
+        scrollbar.config(command=self.listeInventaire.yview)
         scrollbar.pack(side="right", fill="y")
-        listeInventaire.config(yscrollcommand=scrollbar.set)
-        for item in ["on3333333333333333333333e", "two333333333333333", "three333333333333333333", "fou333333333333333r"]:
-            listeInventaire.insert(END, item)
+        self.listeInventaire.config(yscrollcommand=scrollbar.set)
 
-        self.canvasCommande.create_text(140, 140, text=" 56 elements correspondant", font="Arial 13 bold",
-                                        fill="black")
+        self.canvasCommande.create_text(140, 140, text=" 0 elements correspondant", font="Arial 13 bold",
+                                        fill="black", tag="textLongeur")
 
 
     def insererInputPanier(self):
+        """
+        Fonction qui insere tous les widgets dans la section 'Panier'
+        """
 
         self.canvasPanier.create_text(190, 30, text="Panier", font="Arial 24 bold",
                                       fill="black")
+        self.canvasPanier.create_text(118, 64, text=" 0 kg dans le panier", font="Arial 13 bold",
+                                        fill="black", tag="poidPanier")
         frame = Frame(self.fenetrePrincipale)
         frame.place(relx=0.83, rely=0.4, anchor=CENTER)
 
-        listePanier = Listbox(frame, width=30, height=10, font=("Helvetica", 12))
-        listePanier.pack(side="left", fill="y")
+        self.listePanier = Listbox(frame, width=30, height=10, font=("Helvetica", 12))
+        self.listePanier.pack(side="left", fill="y")
 
         scrollbar = Scrollbar(frame, orient="vertical")
-        scrollbar.config(command=listePanier.yview)
+        scrollbar.config(command=self.listePanier.yview)
         scrollbar.pack(side="right", fill="y")
 
-        listePanier.config(yscrollcommand=scrollbar.set)
+        self.listePanier.config(yscrollcommand=scrollbar.set)
 
-        for x in range(100):
-            listePanier.insert(END, str(x))
+    def mettreAJourInventaire(self, event=None):
+        """
+        Fonction qui met à jour l' Inventaire
+        """
+
+        try:
+            self.listeInventaire.delete(0, END)
+            etat = Etat(self.inputNom.get(), self.inputCode.get(), self.comboBox.get())
+            choixPossibles = self.automate.obtenirChoixPossibles(etat)
+            for element in choixPossibles[1]:
+                self.listeInventaire.insert(END, element.obtenirChaine())
+            self.canvasCommande.itemconfig("textLongeur", text=" {} ".format(choixPossibles[0])+"elements correspondant")
+
+        except:
+            pass
+
+    def mettreAJOurPanier(self):
+
+        """
+        Fonction qui met à jour le panier
+        """
+        self.listePanier.delete(0, END)
+        for element in self.panier:
+            self.listePanier.insert(END, element.obtenirChaine())
+        self.canvasPanier.itemconfig("poidPanier",
+                                     text="{} ".format(self.panier.poids) + "kg dans le panier")
+
+    def creerAutomate(self) :
+
+        """
+        Fonction qui creer l'Automate
+        """
+
+        self.automate = Automate()
+        self.canvasPrincipale.itemconfigure("programmeInitialise", state='normal')
+        self.mettreAJourInventaire()
+
+    def modifierTailleListes(self, estUnAjoutPanier, chaine, estUneCommande=False):
+        """
+        Fonction qui modifie la taille des listes pour le panier et pour l'inventaire
+        """
+
+        if(estUnAjoutPanier):
+            try:
+                self.panier += Etat(*chaine.split(" "))
+                self.automate -= Etat(*chaine.split(" "))
+            except CommandeImpossibleError:
+                messagebox.showerror("Erreur",
+                                     'Panier trop lourd !')
+
+        else:
+            self.panier -= Etat(*chaine.split(" "))
+            if not estUneCommande:
+                self.automate += Etat(*chaine.split(" "))
+        self.mettreAJourInventaire()
+        self.mettreAJOurPanier()
+
+    def ajouterPanier(self):
+        """
+        Fonction qui ajoute l'élément séléctionner dans le panier
+        """
+
+        try:
+            index = self.listeInventaire.curselection()[0]
+            objet = self.listeInventaire.get(index)
+            self.modifierTailleListes(True,objet)
+        except IndexError:
+            self.automateNonInitialiserErreur()
+
+    def retirerPanier(self):
+        """
+        Fonction qui retire l'élément séléctionné du panier
+        """
+        try:
+            index = self.listePanier.curselection()[0]
+            objet = self.listePanier.get(index)
+            self.modifierTailleListes(False,objet)
+        except IndexError:
+            self.automateNonInitialiserErreur()
+
+    def viderPanier(self, estUneCommande=False):
+        """
+        Fonction qui vide le panier
+        """
+        try:
+            self.automateNonInitialiserErreur()
+            for element in self.listePanier.get(0,self.listePanier.size()-1):
+                self.modifierTailleListes(False,element,estUneCommande)
+        except IndexError:
+            self.automateNonInitialiserErreur()
+
+    def commander(self):
+        """
+        Fonction qui passe une commande
+        """
+        try:
+            self.viderPanier(True)
+        except IndexError:
+            self.automateNonInitialiserErreur()
+
+    def automateNonInitialiserErreur(self):
+        """
+        Fonction qui génére une erreur quand l'automate n'est
+        pas initialisé
+        """
+
+        if (self.automate == None):
+            messagebox.showerror("Erreur",
+                                 'Programme non initialisé!')
 
 
 
-    def creerGraphe(self) :
-        print("lol")
 
 
