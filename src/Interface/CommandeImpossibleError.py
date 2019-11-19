@@ -6,12 +6,9 @@ class CommandeImpossibleError(Exception) :
     Exception qui est lancée quand la commande dépasse le stock disponible
     """
     
-    def __init__(self, value):
+    def __init__(self, message):
         """Constructeur"""
-        self.value = value
+        super().__init__(message)
 
-    def __str__(self):
-        """Utilisé par la fonction print"""
-        return (repr(self.value))
 
 

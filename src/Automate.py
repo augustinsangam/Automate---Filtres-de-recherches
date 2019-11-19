@@ -3,7 +3,7 @@
 #   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni 
 #                       & Nicolas Verbaere
 #   Date        :   17 Novembre 2019
-#   Projet      :   Itinéraire rapide - Drone collecteur
+#   Projet      :   Automate : Filtres de recherches
 ####################################################################################
 
 from collections import defaultdict
@@ -51,23 +51,23 @@ class Automate(object):
             while ligne :
                 etat = Etat(*(ligne.split(' ')))
                 for etatPrecedent in etat.genererEtatsValidesPrecedents() :
-                    self.memoire[Etat.freeze(etatPrecedent)].add(ligne)
+                    self.memoire[Etat.freeze(etatPrecedent)].add(etat)
                 ligne = fichier.readline().strip()
 
     
 
-    def __getitem__(self, key):
+    def __getitem__(self, etat):
         """
         Méthode spéciale __getitem__
         Surchage de l'opérateur []
 
-        param       key :   L'état pour lequel on cherche des informations
+        param       etat :   L'état pour lequel on cherche des informations
 
         Retourne une liste itérable d'élement matchants avec l'état spécifié
         """
-        if type(key) == Etat :
-            return self.memoire[Etat.freeze(key)]
-        return self.memoire[key]
+        if type(etat) == Etat :
+            return self.memoire[Etat.freeze(etat)]
+        return self.memoire[etat]
 
 
 
@@ -82,7 +82,21 @@ class Automate(object):
 
         """
         for etatPrecedent in etat.genererEtatsValidesPrecedents() :
-            self.memoire[Etat.freeze(etatPrecedent)].remove(etat.obtenirChaine())
+            self.memoire[Etat.freeze(etatPrecedent)].remove(etat)
+
+
+
+    def obtenirChoixPossibles(self, etat) :
+        """
+        Méthode obtenirChoixPossibles(etat)
+        Donne le nombre d'objets et dix objets correspondant à la recherche
+
+        param       etat    :   L'état recherché
+
+        return      Un tuple conteant, nombre d'objets et dix objets correspondant à la recherche
+        """
+        tousLesChoix = self[etat]
+        return (len(tousLesChoix), list(tousLesChoix)[0:10])
 
     
 

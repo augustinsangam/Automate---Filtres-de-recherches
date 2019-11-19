@@ -3,24 +3,27 @@
 #   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni 
 #                       & Nicolas Verbaere
 #   Date        :   17 Novembre 2019
-#   Projet      :   Itinéraire rapide - Drone collecteur
+#   Projet      :   Automate : Filtres de recherches
 ####################################################################################
 
-class Panier(object) :
+from Interface.CommandeImpossibleError import CommandeImpossibleError
+
+class Panier(set) :
     """
     Classe Panier
 
     Classe qui représente un panier
     
-    Un panier est une liste d'objets auqeul est asscocié un poids
+    Un panier est une liste d'objets à laquelle est asscocié un poids
     """
 
+    poidsMaximal = 25       # Attribut statique contenant le poids
 
     def __init__(self) :
         """
         Constructueur
         """
-        self.objets = set()
+        super().__init__()
         self.poids  = 0
 
 
@@ -34,9 +37,30 @@ class Panier(object) :
         param       objet   :   L'objet à ajouter
         """
 
-        self.objets.add(objet)
-        self.poids += Panier.poids(objet[-1]) # Le dernier caractère représente le type
+        nouveauPoids = self.poids + Panier.poids(objet.obtenirChaine()[-1])  # Le dernier caractère représente le type
 
+        if nouveauPoids > Panier.poidsMaximal :
+            raise CommandeImpossibleError('Panier trop lourd !')
+        else :
+            super().add(objet)
+            self.poids = nouveauPoids 
+
+
+
+
+    def __iadd__(self, objet) :
+        """
+        Méthode spéciale __iadd__(objet)
+        Surcharge de l'opérateur +=
+
+        Ajoute permet d'ajouter l'objet au panier
+
+        param       objet   :   L'objet à ajouter
+        """
+
+        self.ajouter(objet)
+        return self
+    
 
 
     def retirer(self, objet) :
@@ -48,8 +72,24 @@ class Panier(object) :
         param       objet   :   L'objet à retirer
         """
 
-        self.objets.remove(objet)
-        self.poids -= Panier.poids(objet[-1]) # Le dernier caractère représente le type
+        super().remove(objet)
+        self.poids -= Panier.poids(objet.obtenirChaine()[-1]) # Le dernier caractère représente le type
+
+
+
+    def __isub__(self, objet) :
+        """
+        Méthode spéciale __isub__(objet)
+        Surcharge de l'opérateur -=
+
+        Retire l'objet au panier
+
+        param       objet   :   L'objet à retirer
+        """
+
+        self.retirer(objet)
+        return self
+
 
 
 
@@ -59,9 +99,10 @@ class Panier(object) :
         Permet de vider tous le panier
         """
         
-        self.objets = set()
+        super().clear()
         self.poids  = 0
 
+        
 
 
     def poids(type) :
