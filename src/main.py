@@ -101,25 +101,25 @@ def testPanier2():
 
 
 if __name__ == "__main__":
-    print('*' * 70)
-    # testAutomate1()
-    #
-    # print()
-    # print('*' * 70)
-    # testAutomate2()
-    #
-    # print()
-    # print('\n\n')
-    # print('*' * 70)
-    # testPanier1()
-    #
-    # print()
-    # print('\n\n')
-    # print('*' * 70)
-    # testPanier2()
-    # print()
-    # print()
-    # print()
+    #print('*' * 70)        ### Des tests. Pas d'importance
+    # testAutomate1()       ### Des tests. Pas d'importance
+    #                       ### Des tests. Pas d'importance
+    # print()               ### Des tests. Pas d'importance
+    # print('*' * 70)       ### Des tests. Pas d'importance
+    # testAutomate2()       ### Des tests. Pas d'importance
+    #                       ### Des tests. Pas d'importance
+    # print()               ### Des tests. Pas d'importance
+    # print('\n\n')         ### Des tests. Pas d'importance
+    # print('*' * 70)       ### Des tests. Pas d'importance
+    # testPanier1()         ### Des tests. Pas d'importance
+    #                       ### Des tests. Pas d'importance
+    # print()               ### Des tests. Pas d'importance
+    # print('\n\n')         ### Des tests. Pas d'importance
+    # print('*' * 70)       ### Des tests. Pas d'importance
+    # testPanier2()         ### Des tests. Pas d'importance
+    # print()               ### Des tests. Pas d'importance
+    # print()               ### Des tests. Pas d'importance
+    # print()               ### Des tests. Pas d'importance
 
-    interface= Interface()
+    interface = Interface()
     interface.mainloop()

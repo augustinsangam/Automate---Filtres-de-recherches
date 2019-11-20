@@ -200,7 +200,7 @@ class Interface(Frame) :
             choixPossibles = self.automate.obtenirChoixPossibles(etat)
             for element in choixPossibles[1]:
                 self.listeInventaire.insert(END, element.obtenirChaine())
-            self.canvasCommande.itemconfig("textLongeur", text=" {} ".format(choixPossibles[0])+"elements correspondant")
+            self.canvasCommande.itemconfig("textLongeur", text=" {} ".format(choixPossibles[0])+"elements correspondant(s)")
 
         except:
             pass

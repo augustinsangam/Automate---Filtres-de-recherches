@@ -34,6 +34,8 @@ class Automate(object):
             cls.instance.memoire    = defaultdict(set)     # La mémoire associée à l'automate. Elle contient tous les états possible
                                                             # Il est censé être une map< Etat, list < str > >
             cls.instance.creerAutomate("../data/inventaire.txt")
+            #cls.instance.creerAutomate("../data/gros_inventaire.txt") # Fichier pour tester le programme avec un gros inventaire
+                                                                      # pour s'assurer des performances. L'initialisation demande 20 secondes
 
         return cls.instance
 
@@ -50,8 +52,7 @@ class Automate(object):
             ligne = fichier.readline().strip()
             while ligne :
                 etat = Etat(*(ligne.split(' ')))
-                for etatPrecedent in etat.genererEtatsValidesPrecedents() :
-                    self.memoire[Etat.freeze(etatPrecedent)].add(etat)
+                self.ajouterEtat(etat)
                 ligne = fichier.readline().strip()
 
     
@@ -107,7 +108,9 @@ class Automate(object):
         return      Un tuple conteant, nombre d'objets et dix objets correspondant à la recherche
         """
         tousLesChoix = self[etat]
-        return (len(tousLesChoix), list(tousLesChoix)[0:10])
+        #return (len(tousLesChoix), self.genererNElement(tousLesChoix, 100))
+        return (len(tousLesChoix), list(tousLesChoix)[0:100])
+
 
     def __iadd__(self, etat):
         """
