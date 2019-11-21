@@ -35,7 +35,7 @@ class Automate(object):
                                                             # Il est censé être une map< Etat, list < str > >
             cls.instance.creerAutomate("../data/inventaire.txt")
             #cls.instance.creerAutomate("../data/gros_inventaire.txt") # Fichier pour tester le programme avec un gros inventaire
-                                                                      # pour s'assurer des performances. L'initialisation demande 20 secondes
+                                                                      # pour s'assurer des performances. L'initialisation demande au maximum 10 secondes
 
         return cls.instance
 
