@@ -1,11 +1,11 @@
 # Automate---Filtres-de-recherches
-`LOG2810 - TP2` | `Une application directe des automates pour créer un filtre de recherche.`
+`LOG2810 - TP2` | `Une application directe des automates pour créer des filtres de recherches.`
 
 ## Lancer l'application
 
 Faire un double clic sur le fichier **src/main.pyw**.
 
-## Exceptions communes et solutions
+## Problème possible
 
 ### Le fichier n'a pas pu être trouvé  !
 Pas de paniques. Notre travail fonctionne. Pour voir les messages d'erreurs en console, renomez le fichier **src/main.pyw** en **src/main.py**.
