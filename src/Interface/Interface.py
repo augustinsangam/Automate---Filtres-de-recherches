@@ -5,7 +5,7 @@ from Etat                                           import Etat
 from Automate                                       import Automate
 from Panier                                         import Panier
 from Interface.CommandeImpossibleError              import CommandeImpossibleError
-
+import os.path
 
 
 class Interface(Frame) :
@@ -221,12 +221,13 @@ class Interface(Frame) :
         """
         Fonction qui creer l'Automate
         """
+        master = Tk()
+        master.geometry("260x80+200+200")
+        master.title('Creer Automate')
+        self.initialiserEntreeFichier(master)
+        master.mainloop()
+        master.destroy()
 
-        self.automate = Automate()
-        self.canvasPrincipale.itemconfigure("programmeInitialise", state='normal')
-        self.canvasPrincipale.itemconfigure("texteACacher", state='hidden')
-        self.canvasPrincipale.itemconfigure("imageACacher", state='hidden')
-        self.mettreAJourInventaire()
 
 
     def modifierTailleListes(self, estUnAjoutPanier, chaine, estUneCommande=False):
@@ -294,6 +295,39 @@ class Interface(Frame) :
             self.viderPanier(True)
         except IndexError:
             self.automateNonInitialiserErreur()
+
+    def initialiserEntreeFichier(self, master):
+        """
+        Fonction qui initialise les entrées lorsqu'on propose d'entrer le nom de fichier.
+        paramètres      master (la fenetre des inputs)
+        """
+
+        Label(master, text="Nom du fichier   ").grid(row=0)
+
+        nomFichier = Entry(master)
+        nomFichier.insert(10, "inventaire.txt")
+        nomFichier.grid(row=0, column=1)
+
+        def creer():
+            """
+            Fonction qui construit l'automate avec le fichier donner en entree''
+            """
+            if os.path.exists("../data/"+nomFichier.get()):
+                self.automate = Automate(nomFichier.get())
+                self.canvasPrincipale.itemconfigure("programmeInitialise", state='normal')
+                self.canvasPrincipale.itemconfigure("texteACacher", state='hidden')
+                self.canvasPrincipale.itemconfigure("imageACacher", state='hidden')
+                self.mettreAJourInventaire()
+            else:
+                messagebox.showerror("Erreur", "Fichier introuvable. Verifiez qu'il se\n"
+                                    "situe dans le dossier Data du projet.")
+            master.quit()
+
+        Button(master, text='Quitter', command=master.quit).grid(row=1,
+                                                                 column=0, sticky=W, pady=4)
+
+        Button(master, text='OK', command=creer).grid(row=1,
+                                                              column=1, sticky=E, pady=4)
 
     def automateNonInitialiserErreur(self):
         """

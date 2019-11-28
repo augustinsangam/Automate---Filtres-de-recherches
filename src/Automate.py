@@ -22,7 +22,7 @@ class Automate(object):
 
     instance = None       # Attribut statique de classe
 
-    def __new__(cls): 
+    def __new__(cls,nomFichier):
         """
         Méthode de construction standard en Python
         Elle suit l'implémentation d'une classe Singleton comme défini ici :
@@ -33,7 +33,7 @@ class Automate(object):
             cls.instance            = object.__new__(cls)
             cls.instance.memoire    = defaultdict(set)     # La mémoire associée à l'automate. Elle contient tous les états possible
                                                             # Il est censé être une map< Etat, list < str > >
-            cls.instance.creerAutomate("../data/inventaire.txt")
+            cls.instance.creerAutomate("../data/"+nomFichier)
             #cls.instance.creerAutomate("../data/gros_inventaire.txt") # Fichier pour tester le programme avec un gros inventaire
                                                                       # pour s'assurer des performances. L'initialisation demande au maximum 10 secondes
 
