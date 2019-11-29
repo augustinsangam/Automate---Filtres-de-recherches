@@ -2,7 +2,7 @@
 #   Fichier     :   Etat.py
 #   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni 
 #                       & Nicolas Verbaere
-#   Date        :   17 Novembre 2019
+#   Date        :   28 Novembre 2019
 #   Projet      :   Automate : Filtres de recherches
 ####################################################################################
 
@@ -28,6 +28,8 @@ class Etat(object):
         self.code   = code
         self.type   = type
 
+
+
     def obtenirChaine(self) :
         """
         Méthode obtenirChaine
@@ -36,6 +38,8 @@ class Etat(object):
         """
 
         return ' '.join([self.nom, self.code, self.type])
+
+
 
     def genererEtatsValidesPrecedents(self) :
         """
@@ -48,6 +52,7 @@ class Etat(object):
             for j in range(len(self.code) + 1 ) :
                 for k in range(len(self.type) + 1 ) :
                     yield Etat(self.nom[0:i], self.code[0:j], self.type[0:k])
+
 
 
     def __eq__(self, etat) :

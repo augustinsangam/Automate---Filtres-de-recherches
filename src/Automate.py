@@ -2,7 +2,7 @@
 #   Fichier     :   Automate.py
 #   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni 
 #                       & Nicolas Verbaere
-#   Date        :   17 Novembre 2019
+#   Date        :   28 Novembre 2019
 #   Projet      :   Automate : Filtres de recherches
 ####################################################################################
 
@@ -22,7 +22,7 @@ class Automate(object):
 
     instance = None       # Attribut statique de classe
 
-    def __new__(cls,nomFichier):
+    def __new__(cls, nomFichier):
         """
         Méthode de construction standard en Python
         Elle suit l'implémentation d'une classe Singleton comme défini ici :
@@ -31,13 +31,12 @@ class Automate(object):
 
         if cls.instance is None:
             cls.instance            = object.__new__(cls)
-            cls.instance.memoire    = defaultdict(set)     # La mémoire associée à l'automate. Elle contient tous les états possible
+            cls.instance.memoire    = defaultdict(set)      # La mémoire associée à l'automate. Elle contient tous les états possible
                                                             # Il est censé être une map< Etat, list < str > >
             cls.instance.creerAutomate("../data/"+nomFichier)
-            #cls.instance.creerAutomate("../data/gros_inventaire.txt") # Fichier pour tester le programme avec un gros inventaire
-                                                                      # pour s'assurer des performances. L'initialisation demande au maximum 10 secondes
 
         return cls.instance
+
 
 
     def creerAutomate(self, nomFichier) :
@@ -84,6 +83,8 @@ class Automate(object):
         for etatPrecedent in etat.genererEtatsValidesPrecedents():
             self.memoire[Etat.freeze(etatPrecedent)].add(etat)
 
+
+
     def enleverEtat(self, etat) :
         """
         Méthode enleverEtat(etat) :
@@ -108,8 +109,10 @@ class Automate(object):
         return      Un tuple conteant, nombre d'objets et dix objets correspondant à la recherche
         """
         tousLesChoix = self[etat]
-        #return (len(tousLesChoix), self.genererNElement(tousLesChoix, 100))
+        
+        # Nous retournons 100 choix au maximum
         return (len(tousLesChoix), list(tousLesChoix)[0:100])
+
 
 
     def __iadd__(self, etat):
@@ -124,6 +127,8 @@ class Automate(object):
         """
         self.ajouterEtat(etat)
         return self
+
+
 
     def __isub__(self, etat) :
         """

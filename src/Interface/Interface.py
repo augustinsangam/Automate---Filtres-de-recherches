@@ -1,3 +1,11 @@
+####################################################################################
+#   Fichier     :   Interface.py
+#   Auteur      :   EyaTom Augustin SANGAM & AbdelRahman Mohammed Bassiouni 
+#                       & Nicolas Verbaere
+#   Date        :   28 Novembre 2019
+#   Projet      :   Automate : Filtres de recherches
+####################################################################################
+
 from tkinter                                        import ttk
 from tkinter                                        import *
 from tkinter                                        import messagebox
